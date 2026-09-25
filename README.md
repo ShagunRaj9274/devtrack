@@ -4,7 +4,7 @@ Issue and project tracking for small software teams: a simplified Jira with a Ka
 
 Built as a full-stack TypeScript monorepo: **Next.js** frontend and **NestJS** API, backed by **PostgreSQL** (via Prisma) and **Redis** (WebSocket fan-out, background jobs, caching).
 
-**Live demo:** _add your link here after deploying_ · log in with `marco@devtrack.dev` / `Password123` (the free API sleeps when idle, so the first load can take up to a minute).
+**Live demo:** https://devtrack-nine-gilt.vercel.app/ · log in with `marco@devtrack.dev` / `Password123` (the free API sleeps when idle, so the first load can take up to a minute).
 
 ![Kanban board](docs/screenshots/board.png)
 
@@ -433,3 +433,4 @@ devtrack/
 ├── .env.example                    optional Compose overrides
 └── package.json                    convenience scripts
 ```
+
