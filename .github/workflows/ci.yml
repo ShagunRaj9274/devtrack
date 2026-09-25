@@ -67,7 +67,7 @@ jobs:
         if: always()
         with:
           name: backend-coverage
-          path: apps/backend/coverage
+          path: apps/backend/coverage/coverage-final.json
           retention-days: 14
       - name: Build
         run: npm run build && npm run build:seed
@@ -139,3 +139,4 @@ jobs:
       - name: Tear down
         if: always()
         run: docker compose down -v
+
