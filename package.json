@@ -1,0 +1,20 @@
+{
+  "name": "devtrack",
+  "private": true,
+  "description": "Convenience scripts. Each app in apps/ is installed and run independently.",
+  "scripts": {
+    "install:all": "npm ci --prefix apps/backend && npm ci --prefix apps/frontend",
+    "services": "docker compose up -d postgres redis",
+    "db:migrate": "npm run prisma:deploy --prefix apps/backend",
+    "db:seed": "npm run db:seed --prefix apps/backend",
+    "dev:api": "npm run start:dev --prefix apps/backend",
+    "dev:web": "npm run dev --prefix apps/frontend",
+    "lint": "npm run lint --prefix apps/backend && npm run lint --prefix apps/frontend",
+    "test": "npm run test:all --prefix apps/backend",
+    "test:cov": "npm run test:cov --prefix apps/backend",
+    "build": "npm run build --prefix apps/backend && npm run build --prefix apps/frontend",
+    "docker:up": "docker compose up --build",
+    "docker:down": "docker compose down",
+    "docker:reset": "docker compose down -v"
+  }
+}

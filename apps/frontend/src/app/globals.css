@@ -1,0 +1,70 @@
+@import 'tailwindcss';
+
+/*
+ * DevTrack tokens. Cool neutral canvas, one deep-teal accent, and semantic
+ * colours reserved for status and priority, where colour carries meaning.
+ */
+@theme {
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-canvas: #f5f6f8;
+  --color-surface: #ffffff;
+  --color-sunken: #eef0f3;
+  --color-line: #e2e5ea;
+  --color-line-strong: #cdd2da;
+  --color-ink: #1b2130;
+  --color-ink-2: #3d4556;
+  --color-muted: #667085;
+
+  --color-accent: #0e7c74;
+  --color-accent-strong: #0a5f59;
+  --color-accent-soft: #e3f3f1;
+
+  --color-danger: #c4302b;
+  --color-danger-soft: #fdecea;
+  --color-warning: #b35c00;
+  --color-success: #2b8a3e;
+
+  /* Status */
+  --color-todo: #6b7385;
+  --color-progress: #1f6fd1;
+  --color-review: #8a4fd6;
+  --color-done: #2b8a3e;
+
+  /* Priority */
+  --color-p-low: #8a93a3;
+  --color-p-medium: #b58300;
+  --color-p-high: #dd5a12;
+  --color-p-critical: #c4302b;
+}
+
+@layer base {
+  html {
+    color: var(--color-ink);
+    background: var(--color-canvas);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--color-accent-soft);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

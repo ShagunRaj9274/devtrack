@@ -1,0 +1,37 @@
+# Render Blueprint: DevTrack API + Redis (Key Value). PostgreSQL lives on Neon (see README "Deploy").
+# Render dashboard → New → Blueprint → pick this repo. You'll be asked for the values marked sync: false.
+services:
+  - type: web
+    name: devtrack-api
+    runtime: docker
+    plan: free
+    dockerContext: ./apps/backend
+    dockerfilePath: ./apps/backend/Dockerfile
+    # Liveness only: checking the database here would keep Neon awake around the clock.
+    healthCheckPath: /api/health/live
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL          # Neon *direct* connection string (not the -pooler one)
+        sync: false
+      - key: CORS_ORIGINS          # your web app URL, e.g. https://devtrack-yourname.vercel.app
+        sync: false
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: devtrack-redis
+          property: connectionString
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: COOKIE_SECURE
+        value: 'true'
+      - key: TRUST_PROXY           # hops of X-Forwarded-For to trust (Vercel proxy + Render load balancer)
+        value: '2'
+      - key: SEED_DEMO_DATA        # seeds demo accounts on first start only (empty database)
+        value: 'true'
+
+  - type: keyvalue
+    name: devtrack-redis
+    plan: free
+    # BullMQ requires that Redis never evicts keys.
+    maxmemoryPolicy: noeviction
+    ipAllowList: []                # internal connections only

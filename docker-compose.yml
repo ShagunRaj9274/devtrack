@@ -1,0 +1,72 @@
+# DevTrack: full stack for local use.
+#   docker compose up --build
+# Web: http://localhost:3000   API: http://localhost:4000/api   Docs: http://localhost:4000/api/docs
+# Optional overrides: copy .env.example to .env (read automatically by Compose).
+
+name: devtrack
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: devtrack
+      POSTGRES_PASSWORD: devtrack
+      POSTGRES_DB: devtrack
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U devtrack -d devtrack']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '${REDIS_PORT:-6379}:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  backend:
+    build: ./apps/backend
+    environment:
+      PORT: 4000
+      DATABASE_URL: postgresql://devtrack:devtrack@postgres:5432/devtrack?schema=public
+      REDIS_URL: redis://redis:6379
+      # Local-only default. Set JWT_ACCESS_SECRET in .env for anything shared or deployed.
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-local-docker-secret-override-me-for-real-use-0123456789}
+      JWT_ACCESS_TTL: 15m
+      REFRESH_TOKEN_TTL_DAYS: 7
+      CORS_ORIGINS: ${WEB_ORIGIN:-http://localhost:3000}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      # Seeds demo users/projects on first start only (never overwrites existing data).
+      SEED_DEMO_DATA: ${SEED_DEMO_DATA:-true}
+    ports:
+      - '4000:4000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./apps/frontend
+      args:
+        # The browser calls the API directly, so this is the host-visible URL.
+        NEXT_PUBLIC_API_URL: ${PUBLIC_API_URL:-http://localhost:4000}
+    ports:
+      - '3000:3000'
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:
